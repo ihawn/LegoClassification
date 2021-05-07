@@ -1,13 +1,14 @@
-import os
-import pathlib
 from PIL import Image
-from numpy import asarray
+import pathlib
+import os
 import numpy as np
+from numpy import asarray
+from keras.utils import np_utils
 import random
 import pickle
 
 
-#Returns the key for encoding and decoding the part, type, and dim as machine readable format
+# Returns the key for encoding and decoding the part, type, and dim as machine readable format
 def Encode_As_Digit():
     path = pathlib.Path(r'C:\Users\Isaac\Documents\Datasets\Lego')
     bricks = list(path.glob('dataset\*'))
@@ -16,18 +17,17 @@ def Encode_As_Digit():
     type = []
     dim = []
 
-    #get image data from filename
+    # get image data from filename
     for i in range(len(bricks)):
         filename = os.path.basename(bricks[i])
         img_data = str.split(filename, ' ')
         part.append(img_data[0])
 
-        #sometimes has two or three words describing type
+        # sometimes has two or three words describing type
         temp = ''
         for k in range(1, len(img_data) - 2):
             temp += img_data[k] + ' '
         type.append(temp)
-
 
         dim.append(img_data[len(img_data) - 2])
 
@@ -43,7 +43,6 @@ def Encode_As_Digit():
 
 
 def Parse():
-
     data = Encode_As_Digit()
     part = data[0]
     type = data[1]
@@ -60,29 +59,28 @@ def Parse():
     print("Encoding brick data...")
     for i in range(len(part)):
         for k in range(len(key_part)):
-            if(part[i] == key_part[k]):
+            if (part[i] == key_part[k]):
                 encoded_part.append(k)
                 break
         for k in range(len(key_type)):
-            if(type[i] == key_type[k]):
+            if (type[i] == key_type[k]):
                 encoded_type.append(k)
                 break
         for k in range(len(key_dim)):
-            if(dim[i] == key_dim[k]):
+            if (dim[i] == key_dim[k]):
                 encoded_dim.append(k)
                 break
 
     brick_matrices = []
     brick_matrices = []
-    l = 2000#len(bricks)
+    l = 2000  # len(bricks)
     parsed_matrices = 0
     g = []
     for i in range(l):
-
         brick = Image.open((bricks[i]))
         g.append(asarray(brick))
 
-    if(os.path.exists("brick_matrices.p")):
+    if (os.path.exists("brick_matrices.p")):
         brick_matrices = pickle.load(open("brick_matrices.p", "rb"))
     else:
         for i in range(l):
@@ -103,27 +101,25 @@ def Prep_Data(input, brick_matrices, split, seed):
     random.Random(seed).shuffle(temp)
     brick_matrices, input = zip(*temp)
 
-    #define test and train
-    pivot = int(split*len(brick_matrices))
-    (x_train, y_train), (x_test, y_test) = (brick_matrices[0:pivot], input[0:pivot]), (brick_matrices[(pivot+1):len(brick_matrices)], input[(pivot+1):len(brick_matrices)])
+    # define test and train
+    pivot = int(split * len(brick_matrices))
+    (x_train, y_train), (x_test, y_test) = (brick_matrices[0:pivot], input[0:pivot]), (
+    brick_matrices[(pivot + 1):len(brick_matrices)], input[(pivot + 1):len(brick_matrices)])
 
     x_train = np.array(x_train)
     y_train = np.array(y_train)
     x_test = np.array(x_test)
     y_test = np.array(y_test)
 
-    #scale matrix data
+    # scale matrix data
     x_train = x_train.astype('float32')
     x_test = x_test.astype('float32')
     x_train /= 255.0
     x_test /= 255.0
 
-    #one hot encode
-    y_train = np.utils.to_catagorical(y_train)
-    y_test = np.utils.to_catagorical(y_test)
+    # one hot encode
+    y_train = np_utils.to_categorical(y_train)
+    y_test = np_utils.to_categorical(y_test)
     class_num = y_test.shape[1]
 
     return x_train, x_test, y_train, y_test, class_num
-
-def Prep_Image_Data():
-    
