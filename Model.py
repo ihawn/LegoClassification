@@ -17,11 +17,6 @@ def Train_And_Test(outputFile, activation, x_train, y_train, x_test, y_test, cla
     model.add(Dropout(0.2))
     model.add(BatchNormalization())
 
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(BatchNormalization())
-
     model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
     model.add(Dropout(0.2))
     model.add(BatchNormalization())
@@ -29,12 +24,14 @@ def Train_And_Test(outputFile, activation, x_train, y_train, x_test, y_test, cla
     model.add(Flatten())
     model.add(Dropout(0.2))
 
-    model.add(Dense(256, kernel_constraint=maxnorm(3)))
+
+    model.add(Dense(32, kernel_constraint=maxnorm(3)))
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
     model.add(BatchNormalization())
 
-    model.add(Dense(128, kernel_constraint=maxnorm(3)))
+
+    model.add(Dense(64, kernel_constraint=maxnorm(3)))
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
     model.add(BatchNormalization())

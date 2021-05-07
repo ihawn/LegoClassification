@@ -58,6 +58,8 @@ def Parse():
 
     print("Encoding brick data...")
     for i in range(len(part)):
+        if(i%1000 == 0):
+            print(i, "/", len(part))
         for k in range(len(key_part)):
             if (part[i] == key_part[k]):
                 encoded_part.append(k)
@@ -73,12 +75,9 @@ def Parse():
 
     brick_matrices = []
     brick_matrices = []
-    l = 2000  # len(bricks)
+    l = len(bricks)
     parsed_matrices = 0
-    g = []
-    for i in range(l):
-        brick = Image.open((bricks[i]))
-        g.append(asarray(brick))
+
 
     if (os.path.exists("brick_matrices.p")):
         brick_matrices = pickle.load(open("brick_matrices.p", "rb"))
