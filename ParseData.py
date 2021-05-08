@@ -58,7 +58,7 @@ def Parse():
 
     print("Encoding brick data...")
     for i in range(len(part)):
-        if(i%1000 == 0):
+        if(i%5000 == 0):
             print(i, "/", len(part))
         for k in range(len(key_part)):
             if (part[i] == key_part[k]):
@@ -80,6 +80,7 @@ def Parse():
 
 
     if (os.path.exists("brick_matrices.p")):
+        print("Reading matrix data...")
         brick_matrices = pickle.load(open("brick_matrices.p", "rb"))
     else:
         for i in range(l):

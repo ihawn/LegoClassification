@@ -8,42 +8,36 @@ def Train_And_Test(outputFile, activation, x_train, y_train, x_test, y_test, cla
 
     model = Sequential()
 
-    model.add(Conv2D(32, (3, 3), input_shape=x_train.shape[1:], activation='relu', padding='same'))
-    model.add(Dropout(0.2))
-    model.add(BatchNormalization())
-
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(32, (7, 7), input_shape=x_train.shape[1:], activation='relu', padding='same'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.2))
     model.add(BatchNormalization())
 
-    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(16, (5, 5), padding='same', activation='relu'))
     model.add(Dropout(0.2))
     model.add(BatchNormalization())
+
 
     model.add(Flatten())
     model.add(Dropout(0.2))
 
 
-    model.add(Dense(32, kernel_constraint=maxnorm(3)))
+    model.add(Dense(128, kernel_constraint=maxnorm(3)))
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
     model.add(BatchNormalization())
 
-
-    model.add(Dense(64, kernel_constraint=maxnorm(3)))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.2))
-    model.add(BatchNormalization())
 
     model.add(Dense(class_num))
     model.add(Activation(activation))
+
+    model.summary()
 
     # train
     optimizer = 'adam'
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     np.random.seed(seed)
-    model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=epochs, batch_size=8)
+    model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=epochs, batch_size=64)
 
     # test
     scores = model.evaluate(x_test, y_test, verbose=0)

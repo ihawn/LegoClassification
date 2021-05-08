@@ -1,10 +1,14 @@
+import matplotlib.pyplot as plt
+from tensorflow import keras
+import pickle
 from ParseData import *
-from Model import *
-import time
 
-#parameters
+
+key_dim = pickle.load(open("key_dim.p", 'rb'))
+key_part = pickle.load(open("key_part.p", 'rb'))
+key_type = pickle.load(open("key_type.p", 'rb'))
+
 split = 0.8
-epochs = 30
 seed = 10
 
 data = Parse()
@@ -33,8 +37,14 @@ y_train_dim = dim_data[2]
 y_test_dim = dim_data[3]
 class_num_dim = dim_data[4]
 
+model_dim = keras.models.load_model("DimensionModel.h5")
 
-print("Training for dim")
-#Train_And_Test('DimensionModel.h5', 'softmax', x_train, y_train_dim, x_test, y_test_dim, class_num_dim, seed, epochs)
-print("Training for type")
-Train_And_Test('PartModel.h5', 'softmax', x_train, y_train_part, x_test, y_test_part, class_num_part, seed, epochs)
+prediction_dim = model_dim.predict(x_test)
+
+for i in range(30):
+    plt.grid(False)
+    plt.imshow(x_test[i], cmap=plt.cm.binary)
+    plt.title("Prediction: " + key_dim[np.argmax(prediction_dim[i])])
+
+    plt.xlabel("Actual: " + key_dim[(np.argmax(y_test_dim[i]))])
+    plt.show()
